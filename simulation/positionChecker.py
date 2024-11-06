@@ -42,7 +42,6 @@ class PositionEndChecker(PositionChecker):
             if self.rect.colliderect(vehicle.rect):
                 vehicles.remove(vehicle)
                 PositionChecker.carFinishedCount+=1
-                print(f"number of car served: {PositionChecker.carFinishedCount}")
 
 
 class PositionStartChecker(PositionChecker):
@@ -104,15 +103,12 @@ class PositionDirectionChecker(PositionChecker):
 
     def check_collision_with_vehicles(self, vehicles):
         for vehicle in vehicles:
-            if self.rect.colliderect(vehicle.rect) and vehicle.start_direction == self.affected_direction:
+            # Only process if the vehicle hasn't collided yet
+            if (not vehicle.has_collided and
+                    self.rect.colliderect(vehicle.rotated_traffic_light_rect) and
+                    vehicle.start_direction == self.affected_direction):
                 vehicle_target_exit = vehicle.targetExit
                 if self.direction_checker_exit_type == vehicle_target_exit:
-                    print(
-                        "vehicle_target_exit:", vehicle_target_exit, " | "
-                        "vehicle.direction:", vehicle.direction, " | "
-                        "nextdirection:", vehicle.direction + self.direction_checker_exit_type.value, " | "
-                        "status:", vehicle.direction >= vehicle.direction + self.direction_checker_exit_type.value, " | "
-                        "turn step:", self.direction_checker_exit_type.value / abs(self.direction_checker_exit_type.value) * self.rotation_speed, " ; "
-                    )
-                    if vehicle.direction >= vehicle.direction + self.direction_checker_exit_type.value:
-                        vehicle.turn(self.direction_checker_exit_type.value / abs(self.direction_checker_exit_type.value) * self.rotation_speed)
+                    vehicle.target_direction = vehicle.direction + self.direction_checker_exit_type.value
+                    # Mark the vehicle as collided for this cycle
+                    vehicle.has_collided = True

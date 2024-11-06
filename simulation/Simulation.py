@@ -1,3 +1,5 @@
+import time
+
 import pygame
 
 from simulation.Enums import TargetExit
@@ -12,6 +14,8 @@ SCREEN_HEIGHT = 600
 
 class TrafficSimulation:
     def __init__(self):
+        self.seconds = None
+        self.minutes = None
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Roundabout Traffic Light Simulation")
@@ -21,6 +25,7 @@ class TrafficSimulation:
         self.background = pygame.transform.scale(self.background, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
         self.clock = pygame.time.Clock()
+        self.start_time = time.time()
         self.running = True
 
 
@@ -51,16 +56,16 @@ class TrafficSimulation:
                 "r": PositionStopChecker((500, 180), (3, 100), self.traffic_lights["tr"]),
             },
             "first exit direction": {
-                "l": PositionDirectionChecker((320, 360), (5, 5), 0,  TargetExit.FIRST_EXIT),
-                "t": PositionDirectionChecker((335, 200), (5, 5), 90, TargetExit.FIRST_EXIT),
-                "b": PositionDirectionChecker((470, 370), (5, 5), 270, TargetExit.FIRST_EXIT),
-                "r": PositionDirectionChecker((480, 220), (5, 5), 180, TargetExit.FIRST_EXIT),
+                "l": PositionDirectionChecker((330, 360), (5, 5), 0,  TargetExit.FIRST_EXIT),
+                "t": PositionDirectionChecker((335, 220), (5, 5), 90, TargetExit.FIRST_EXIT),
+                "b": PositionDirectionChecker((470, 350), (5, 5), 270, TargetExit.FIRST_EXIT),
+                "r": PositionDirectionChecker((460, 220), (5, 5), 180, TargetExit.FIRST_EXIT),
             },
             "third exit direction":{
-                "l": PositionDirectionChecker((350, 350), (5, 5), 0, TargetExit.THIRD_EXIT),
-                "t": PositionDirectionChecker((350, 230), (5, 5), 90, TargetExit.THIRD_EXIT),
-                "b": PositionDirectionChecker((460, 340), (5, 5), 270, TargetExit.THIRD_EXIT),
-                "r": PositionDirectionChecker((450, 230), (5, 5), 180, TargetExit.THIRD_EXIT),
+                "l": PositionDirectionChecker((460, 340), (5, 5), 0, TargetExit.THIRD_EXIT),
+                "t": PositionDirectionChecker((350, 330), (5, 5), 90, TargetExit.THIRD_EXIT),
+                "b": PositionDirectionChecker((450, 230), (5, 5), 270, TargetExit.THIRD_EXIT),
+                "r": PositionDirectionChecker((360, 230), (5, 5), 180, TargetExit.THIRD_EXIT),
             }
         }
 
@@ -69,34 +74,60 @@ class TrafficSimulation:
         for positionChecke in self.positionCheckes["start"].values():
             spawn_positions.append(positionChecke)
 
-        self.spawner = Spawner(spawn_positions, self.cars, interval=1000000)
+        self.spawner = Spawner(spawn_positions, self.cars, interval=1500)
 
+        self.text_vechule_spowned : pygame.font.Font
+        self.text_vechule_destroyed : pygame.font.Font
+
+    def update_text(self):
+        font = pygame.font.Font(None, 25)
+        self.text_vechule_spowned = font.render(f"number of vehicles spawned: {Spawner.totalVehicles}", True,(100, 100, 255))
+        self.text_vechule_destroyed = font.render(f"number of vehicles destroyed: {PositionEndChecker.carFinishedCount}",True, (100, 255, 100))
+
+    def draw_elapsed_time(self):
+        font = pygame.font.Font(None, 20)
+        elapsed_time = time.time() - self.start_time
+        self.minutes = int(elapsed_time // 60)
+        self.seconds = int(elapsed_time % 60)
+        time_text = font.render(f"Time elapsed: {self.minutes:02}:{self.seconds:02}", True, (255, 255, 255))
+        self.screen.blit(time_text, (10, 90))
 
     def run(self):
 
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    print(f"number of vehicles spawned: {Spawner.totalVehicles}")
+                    print(f"number of vehicles destroyed: {PositionEndChecker.carFinishedCount}")
+                    print(f"Time elapsed: {self.minutes:02}:{self.seconds:02}")
                     self.running = False
                 self.spawner.update(event)
 
+            self.update_text()
             # Draw the background image on the screen
             self.screen.blit(self.background, (0, 0))
+            self.screen.blit(self.text_vechule_spowned, (10, 10))
+            self.screen.blit(self.text_vechule_destroyed, (10, 50))
+
+            self.draw_elapsed_time()
 
             for light in self.traffic_lights.values():
                 light.update()
                 light.draw(self.screen)
 
-            for checker in self.positionCheckes.values():
-                for subChecker in checker.values():
-                    subChecker.draw(self.screen)
-                    subChecker.check_collision_with_vehicles(self.cars)
+            self.spawner.update()
 
 
             # Update and draw all sprites
             for car in self.cars:
                 car.update(self.cars)
                 car.draw(self.screen)
+
+
+            for checker in self.positionCheckes.values():
+                for subChecker in checker.values():
+                    subChecker.draw(self.screen)
+                    subChecker.check_collision_with_vehicles(self.cars)
 
 
             pygame.display.update()
