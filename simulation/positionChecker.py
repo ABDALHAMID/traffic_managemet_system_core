@@ -20,7 +20,7 @@ class PositionChecker(ABC):
         self.rect = pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
 
     @abstractmethod
-    def draw(self, screen):
+    def draw(self, screen, direction):
         pass
     @abstractmethod
     def check_collision_with_vehicles(self, cars):
@@ -31,7 +31,7 @@ class PositionEndChecker(PositionChecker):
     def __init__(self, position, size):
         super().__init__(position= position, size=size)
 
-    def draw(self, screen):
+    def draw(self, screen, direction):
         checker_surface = pygame.Surface(self.size, pygame.SRCALPHA)
         color = pygame.Color(255, 0, 0, 128)
         checker_surface.fill(color)
@@ -50,7 +50,7 @@ class PositionStartChecker(PositionChecker):
         self.direction = direction
 
 
-    def draw(self, screen):
+    def draw(self, screen, direction):
         checker_surface = pygame.Surface(self.size, pygame.SRCALPHA)
         color = pygame.Color(0, 0, 255, 128)
         checker_surface.fill(color)
@@ -64,11 +64,22 @@ class PositionStopChecker(PositionChecker):
         super().__init__(position=position, size=size)
         self.trafficLight = traffic_light
 
-    def draw(self, screen):
+    def draw(self, screen, direction):
+        # Create a transparent surface with the size of the checker
         checker_surface = pygame.Surface(self.size, pygame.SRCALPHA)
+
+        # Fill the surface with a semi-transparent color
         color = pygame.Color(255, 255, 255, 128)
         checker_surface.fill(color)
-        screen.blit(checker_surface, self.position)
+
+        # Rotate the checker surface to match the road's direction
+        rotated_checker_surface = pygame.transform.rotate(checker_surface, -direction)
+
+        # Adjust the position to keep the rotated surface centered on the original position
+        rotated_rect = rotated_checker_surface.get_rect(center=self.position)
+
+        # Draw the rotated checker surface on the screen
+        screen.blit(rotated_checker_surface, rotated_rect.topleft)
 
     def check_collision_with_vehicles(self, vehicles):
         for vehicle in vehicles:
@@ -88,7 +99,7 @@ class PositionDirectionChecker(PositionChecker):
         self.rotation_speed = rotation_speed
         self.affected_direction = affected_direction
 
-    def draw(self, screen):
+    def draw(self, screen, direction):
         checker_surface = pygame.Surface(self.size, pygame.SRCALPHA)
         if self.direction_checker_exit_type == TargetExit.FIRST_EXIT:
             color = pygame.Color(0, 0, 255, 128)

@@ -1,7 +1,10 @@
+import string
 import time
+from typing import Dict
 
 import pygame
 
+from simulation.DataCollector import DataCollector
 from simulation.Enums import TargetExit
 from simulation.Spowner import Spawner
 from simulation.TrafficLight import TrafficLight, TrafficLightState
@@ -28,12 +31,14 @@ class TrafficSimulation:
         self.start_time = time.time()
         self.running = True
 
+        self.dataCollector = DataCollector(self)
 
-        self.traffic_lights = {
-            "bl" : TrafficLight((250, 390), TrafficLightState.GREEN), #bootem left
-            "tl" : TrafficLight((280, 120), TrafficLightState.RED), #top left
-            "br" : TrafficLight((500, 410), TrafficLightState.RED), #bootem right
-            "tr" : TrafficLight((520, 155), TrafficLightState.GREEN), #top right
+
+        self.traffic_lights: Dict[str, TrafficLight] = {
+            "l" : TrafficLight((250, 390), TrafficLightState.GREEN), #bootem left
+            "t" : TrafficLight((280, 120), TrafficLightState.RED), #top left
+            "b" : TrafficLight((500, 410), TrafficLightState.RED), #bootem right
+            "r" : TrafficLight((520, 155), TrafficLightState.GREEN), #top right
         }
 
         self.positionCheckes = {
@@ -50,10 +55,10 @@ class TrafficSimulation:
                 "r": PositionEndChecker((1, 180), (2, 100)),
             },
             "stop": {
-                "l": PositionStopChecker((300, 300), (3, 100), self.traffic_lights["bl"]),
-                "t": PositionStopChecker((300, 180), (100, 3), self.traffic_lights["tl"]),
-                "b": PositionStopChecker((410, 390), (100, 3), self.traffic_lights["br"]),
-                "r": PositionStopChecker((500, 180), (3, 100), self.traffic_lights["tr"]),
+                "l": PositionStopChecker((300, 300), (3, 100), self.traffic_lights["l"]),
+                "t": PositionStopChecker((300, 180), (100, 3), self.traffic_lights["t"]),
+                "b": PositionStopChecker((410, 390), (100, 3), self.traffic_lights["b"]),
+                "r": PositionStopChecker((500, 180), (3, 100), self.traffic_lights["r"]),
             },
             "first exit direction": {
                 "l": PositionDirectionChecker((330, 360), (5, 5), 0,  TargetExit.FIRST_EXIT),
@@ -130,10 +135,22 @@ class TrafficSimulation:
                     subChecker.check_collision_with_vehicles(self.cars)
 
 
+            self.dataCollector.update()
+
             pygame.display.update()
             self.clock.tick(30)
 
         pygame.quit()
+
+    def getNumberOfRoads(self):
+        return self.traffic_lights.__len__()
+
+    def getTrafficLightsStatus(self):
+        states: list[TrafficLightState] = [light.state for light in self.traffic_lights.values()]
+        return states
+
+    def getCarsPerRoad(self):
+
 
 simulation = TrafficSimulation()
 simulation.run()

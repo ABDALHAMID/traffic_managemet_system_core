@@ -9,7 +9,11 @@ class TrafficLightState(Enum):
 
 
 class TrafficLight(pygame.sprite.Sprite):
-    def __init__(self, position, startState: TrafficLightState, red_duration=10000, green_duration=10000, yellow_duration=3000):
+    def __init__(self, position,
+                 startState: TrafficLightState,
+                 red_duration=10000,
+                 green_duration=10000,
+                 yellow_duration=3000):
         super().__init__()
         self.position = position
         self.red_duration = red_duration
