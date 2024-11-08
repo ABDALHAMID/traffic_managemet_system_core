@@ -6,8 +6,8 @@ import pygame
 from simulation.DataCollector import DataCollector
 from simulation.Enums import TargetExit
 from simulation.Spowner import Spawner
-from simulation.TrafficLight import TrafficLight, TrafficLightState
-from simulation.positionChecker import PositionStartChecker, PositionEndChecker, PositionStopChecker, \
+from simulation.Prefabs.TrafficLight import TrafficLight, TrafficLightState
+from simulation.Prefabs.positionChecker import PositionStartChecker, PositionEndChecker, PositionStopChecker, \
     PositionDirectionChecker
 
 # Screen dimensions
@@ -125,7 +125,7 @@ class TrafficSimulation:
             # Update and draw all sprites
             for car in self.cars:
                 car.update(self.cars)
-                car.draw(self.screen)
+                #car.draw(self.screen)
 
 
             for checker in self.positionCheckes.values():

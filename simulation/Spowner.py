@@ -1,7 +1,7 @@
 import pygame
 import random
 from Vehicle import Vehicle
-from simulation.positionChecker import PositionChecker, PositionStartChecker
+from simulation.Prefabs.positionChecker import PositionChecker, PositionStartChecker
 from typing import List
 
 

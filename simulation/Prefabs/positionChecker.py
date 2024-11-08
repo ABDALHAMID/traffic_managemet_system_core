@@ -1,9 +1,8 @@
 import pygame
-from enum import Enum
 from abc import ABC, abstractmethod
 
 from simulation.Enums import TargetExit
-from simulation.TrafficLight import TrafficLight, TrafficLightState
+from simulation.Prefabs.TrafficLight import TrafficLight, TrafficLightState
 
 # class PositionCheckerType(Enum):
 #     CHECKEND = "check end"

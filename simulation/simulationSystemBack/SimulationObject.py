@@ -84,6 +84,8 @@ class SimulationObject(GameObject, ABC):
 
 
     def draw(self, screen):
+
+        print(self.color)
         if isinstance(self.color, tuple) and len(self.color) == 4 and all(isinstance(c, int) for c in self.color):
             self.__draw_surface(screen, self.color)
         elif isinstance(self.color, str):
@@ -97,9 +99,9 @@ class SimulationObject(GameObject, ABC):
         surface = pygame.Surface(size, pygame.SRCALPHA)
         color = pygame.Color(color)
         surface.fill(color)
-        rotated_checker_surface = pygame.transform.rotate(surface, -self.direction.direction)
-        rotated_rect = rotated_checker_surface.get_rect(center=position)
-        screen.blit(rotated_checker_surface, rotated_rect.topleft)
+        rotated_surface = pygame.transform.rotate(surface, -self.direction.direction)
+        rotated_rect = rotated_surface.get_rect(center=position)
+        screen.blit(rotated_surface, rotated_rect.topleft)
 
     def __draw_image(self, screen, image_path: str):
         size = (self.size.width, self.size.height)
@@ -109,4 +111,3 @@ class SimulationObject(GameObject, ABC):
         image = pygame.transform.rotate(original_image, -self.direction.direction)
         rect = image.get_rect(center=position)
         screen.blit(image, rect)
-
