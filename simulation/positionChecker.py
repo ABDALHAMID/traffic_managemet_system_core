@@ -81,6 +81,10 @@ class PositionStopChecker(PositionChecker):
         # Draw the rotated checker surface on the screen
         screen.blit(rotated_checker_surface, rotated_rect.topleft)
 
+
+
+
+
     def check_collision_with_vehicles(self, vehicles):
         for vehicle in vehicles:
             if self.rect.colliderect(vehicle.rect):

@@ -46,6 +46,6 @@ class TrafficLight(pygame.sprite.Sprite):
 
     def draw(self, screen):
         # Draw the traffic light rectangle (or a more realistic shape)
-        pygame.draw.rect(screen, (50, 50, 50), self.rect)  # Draw light housing
+        pygame.draw.rect(screen, (100, 100, 100), self.rect)  # Draw light housing
         # Draw the circle for the light itself
         pygame.draw.circle(screen, self.color, self.rect.center, 10)

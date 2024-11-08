@@ -24,7 +24,7 @@ class Road:
                                      self.startingStatus)
 
         self.positionStopChecker = PositionStopChecker((self.position[0] + math.cos(math.radians(self.direction)) * self.size[0]/2,
-                                                        self.position[1] + math.sin(math.radians(self.direction)) * self.size[1]/2),
+                                                        self.position[1] + math.sin(math.radians(self.direction)) * self.size[0]/2),
                                                        (10, self.size[1]),
                                                        self.trafficLight)
 

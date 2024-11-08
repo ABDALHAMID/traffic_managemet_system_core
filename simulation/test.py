@@ -13,7 +13,7 @@ pygame.display.set_caption("Road Test")
 # Define road parameters for testing
 road_position = (400, 300)       # Center of the screen
 road_size = (300, 100)            # Width and height of the road
-road_direction = 90             # Direction in degrees
+road_direction = 140             # Direction in degrees
 starting_traffic_light_state = TrafficLightState.GREEN  # Assuming TrafficLightState is an enum or similar
 vehicles = []                    # Empty list for vehicles (for now)
 
