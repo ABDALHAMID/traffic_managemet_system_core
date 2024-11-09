@@ -1,7 +1,8 @@
 import math
 
 from simulation.Prefabs.TrafficLight import TrafficLight, TrafficLightState
-from simulation.Prefabs.positionChecker import PositionStopChecker
+from simulation.Prefabs.positionChecker import PositionStopChecker, PositionStartChecker
+from simulation.simulationStatics.StaticMethods import StaticMethods
 from simulation.simulationSystemBack.SimulationObject import SimulationObject
 
 
@@ -11,44 +12,63 @@ class Road(SimulationObject):
                  size: tuple[float, float],
                  direction: float,
                  starting_status: TrafficLightState,
-                 vehivles,
                  ):
         road_img = "C:/Users/ABDVO/OneDrive/Documents/GitHub/traffic_managemet_system_core/assets/images/roads/road.png"
         super().__init__(position, size, direction, road_img)
-        self.vehivles = vehivles
 
         traffic_light_x_offset = -30
         traffic_light_y_offset = 0
-        bottom_right_x = (self.position.x +
-                          math.cos(math.radians(self.direction.direction)) * (
-                                      self.size.width / 2 + traffic_light_x_offset) -
-                          math.sin(math.radians(self.direction.direction)) * (
-                                      self.size.height / 2 + traffic_light_y_offset))
 
-        bottom_right_y = (self.position.y +
-                          math.sin(math.radians(self.direction.direction)) * (
-                                      self.size.width / 2 + traffic_light_x_offset) +
-                          math.cos(math.radians(self.direction.direction)) * (
-                                      self.size.height / 2 + traffic_light_y_offset))
+        traffic_light_position = StaticMethods.getRelativeBottomRightPositionToSize(self.position,
+                                                                         self.direction,
+                                                                         self.size,
+                                                                         (traffic_light_x_offset, traffic_light_y_offset))
 
-        self.trafficLight = TrafficLight( (bottom_right_x, bottom_right_y),
+        self.trafficLight = TrafficLight(traffic_light_position,
                                          self.direction.direction,
                                          starting_status)
 
-        self.positionStopChecker = PositionStopChecker((self.position.x + math.cos(math.radians(self.direction.direction)) * self.size.width/2,
-                                                        self.position.y + math.sin(math.radians(self.direction.direction)) * self.size.width/2),
+        position_checker_x_offset = 0
+        position_checker_y_offset = 0
+
+        position_checker_position = StaticMethods.getRelativeCenterRightPositionToSize(self.position,
+                                                                         self.direction,
+                                                                         self.size,
+                                                                         (position_checker_x_offset,
+                                                                          position_checker_y_offset))
+
+        self.positionStopChecker = PositionStopChecker(position_checker_position,
                                                        (10, self.size.height),
+                                                       self.direction.direction,
                                                        self.trafficLight)
+
+        position_checker_x_offset = -50
+        position_checker_y_offset = 0
+
+        position_checker_position = StaticMethods.getRelativeCenterLeftPositionToSize(self.position,
+                                                                                       self.direction,
+                                                                                       self.size,
+                                                                                       (position_checker_x_offset,
+                                                                                        position_checker_y_offset))
+
+        self.positionStartChecker = PositionStartChecker(position_checker_position,
+                                                         (10, self.size.height),
+                                                         self.direction.direction)
 
     def draw(self, screen):
         super().draw(screen)
 
         self.trafficLight.draw(screen)
 
-        self.positionStopChecker.draw(screen, self.direction.direction)
+        self.positionStopChecker.draw(screen)
+
+        self.positionStartChecker.draw(screen)
 
     def update(self):
         pass
+
+    def getStartChecker(self) -> PositionStartChecker:
+        return self.positionStartChecker
 
     # def calcPos(self):
     #     position:(float, float)

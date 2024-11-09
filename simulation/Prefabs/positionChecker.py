@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 
 from simulation.Enums import TargetExit
 from simulation.Prefabs.TrafficLight import TrafficLight, TrafficLightState
+from simulation.simulationSystemBack.SimulationObject import SimulationObject
+
 
 # class PositionCheckerType(Enum):
 #     CHECKEND = "check end"
@@ -11,30 +13,29 @@ from simulation.Prefabs.TrafficLight import TrafficLight, TrafficLightState
 #     CHECKDIRECTION = "check direction"
 
 
-class PositionChecker(ABC):
+class PositionChecker(SimulationObject, ABC):
     carFinishedCount = 0
-    def __init__(self, position, size):
-        self.position = position
-        self.size = (size[0], size[1])
-        self.rect = pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
+    def __init__(self,
+                 position: tuple[float, float],
+                 size: tuple[float, float],
+                 direction: float,
+                 color: tuple[int, int, int, int] | str):
+        super().__init__(position, size, direction, color)
 
-    @abstractmethod
-    def draw(self, screen, direction):
-        pass
+    def draw(self, screen):
+        super().draw(screen)
     @abstractmethod
     def check_collision_with_vehicles(self, cars):
         pass
 
 
 class PositionEndChecker(PositionChecker):
-    def __init__(self, position, size):
-        super().__init__(position= position, size=size)
-
-    def draw(self, screen, direction):
-        checker_surface = pygame.Surface(self.size, pygame.SRCALPHA)
-        color = pygame.Color(255, 0, 0, 128)
-        checker_surface.fill(color)
-        screen.blit(checker_surface, self.position)
+    def __init__(self,
+                 position: tuple[float, float],
+                 size: tuple[float, float],
+                 direction: float):
+        color = (255, 0, 0, 128)
+        super().__init__(position= position, size=size, direction=direction, color=color)
 
     def check_collision_with_vehicles(self, vehicles):
         for vehicle in vehicles:
@@ -44,45 +45,26 @@ class PositionEndChecker(PositionChecker):
 
 
 class PositionStartChecker(PositionChecker):
-    def __init__(self, position, size, direction = 0):
-        super().__init__(position=position, size=size)
-        self.direction = direction
+    def __init__(self,
+                 position: tuple[float, float],
+                 size: tuple[float, float],
+                 direction: float):
+        color = (0, 255, 0, 128)
+        super().__init__(position=position, size=size, direction=direction, color=color)
 
-
-    def draw(self, screen, direction):
-        checker_surface = pygame.Surface(self.size, pygame.SRCALPHA)
-        color = pygame.Color(0, 0, 255, 128)
-        checker_surface.fill(color)
-        screen.blit(checker_surface, self.position)
 
     def check_collision_with_vehicles(self, cars):
         pass
 
 class PositionStopChecker(PositionChecker):
-    def __init__(self, position, size, traffic_light: TrafficLight):
-        super().__init__(position=position, size=size)
+    def __init__(self,
+                 position: tuple[float, float],
+                 size: tuple[float, float],
+                 direction: float,
+                 traffic_light: TrafficLight):
+        color = (255, 255, 255, 128)
         self.trafficLight = traffic_light
-
-    def draw(self, screen, direction):
-        # Create a transparent surface with the size of the checker
-        checker_surface = pygame.Surface(self.size, pygame.SRCALPHA)
-
-        # Fill the surface with a semi-transparent color
-        color = pygame.Color(255, 255, 255, 128)
-        checker_surface.fill(color)
-
-        # Rotate the checker surface to match the road's direction
-        rotated_checker_surface = pygame.transform.rotate(checker_surface, -direction)
-
-        # Adjust the position to keep the rotated surface centered on the original position
-        rotated_rect = rotated_checker_surface.get_rect(center=self.position)
-
-        # Draw the rotated checker surface on the screen
-        screen.blit(rotated_checker_surface, rotated_rect.topleft)
-
-
-
-
+        super().__init__(position= position, size=size, direction=direction, color=color)
 
     def check_collision_with_vehicles(self, vehicles):
         for vehicle in vehicles:
@@ -96,24 +78,26 @@ class PositionStopChecker(PositionChecker):
 
 
 class PositionDirectionChecker(PositionChecker):
-    def __init__(self, position, size, affected_direction, direction_checker_exit_type: TargetExit, rotation_speed = 1):
-        super().__init__(position=position, size=size)
+    def __init__(self,
+                 position: tuple[float, float],
+                 size: tuple[float, float],
+                 direction: float,
+                 direction_checker_exit_type: TargetExit,
+                 affected_direction: float,
+                 rotation_speed = 1):
         self.direction_checker_exit_type: TargetExit = direction_checker_exit_type
         self.rotation_speed = rotation_speed
         self.affected_direction = affected_direction
-
-    def draw(self, screen, direction):
-        checker_surface = pygame.Surface(self.size, pygame.SRCALPHA)
         if self.direction_checker_exit_type == TargetExit.FIRST_EXIT:
-            color = pygame.Color(0, 0, 255, 128)
+            color = (0, 0, 255, 128)
         elif self.direction_checker_exit_type == TargetExit.FIRST_EXIT:
-            color = pygame.Color(0, 255, 255, 128)
+            color = (0, 255, 255, 128)
         elif self.direction_checker_exit_type == TargetExit.FIRST_EXIT:
-            color = pygame.Color(0, 255, 255, 128)
+            color = (0, 255, 255, 128)
         else:
-            color = pygame.Color(255, 255, 0, 128)
-        checker_surface.fill(color)
-        screen.blit(checker_surface, self.position)
+            color = (255, 255, 0, 128)
+
+        super().__init__(position=position, size=size, direction=direction, color=color)
 
     def check_collision_with_vehicles(self, vehicles):
         for vehicle in vehicles:

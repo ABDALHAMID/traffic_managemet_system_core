@@ -1,6 +1,6 @@
 import pygame
 import random
-from Vehicle import Vehicle
+from simulation.Prefabs.Vehicle import Vehicle
 from simulation.Prefabs.positionChecker import PositionChecker, PositionStartChecker
 from typing import List
 
@@ -21,8 +21,8 @@ class Spawner:
     def spawn_car(self):
         # Choose a random position from the available spawn positions
         span_pos : PositionStartChecker = random.choice(self.spawn_positions)
-        position = span_pos.position
-        direction = span_pos.direction
+        position = (span_pos.position.x, span_pos.position.y)
+        direction = span_pos.direction.direction
         # Create a new car at that position with random attributes
         new_car = Vehicle(start_pos=position,
                           image_path=random.choice(Spawner.cars_img),
