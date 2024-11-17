@@ -1,6 +1,7 @@
 import pygame
 from simulation.Prefabs.TrafficLight import TrafficLightState
 from simulation.Prefabs.Road import Road  # Assuming Road is in simulation/Road.py
+from simulation.Prefabs.round_about import RoundAbout
 
 # Initialize Pygame
 pygame.init()
@@ -12,16 +13,13 @@ pygame.display.set_caption("Road Test")
 
 # Define road parameters for testing
 road_position = (400, 300)       # Center of the screen
-road_size = (300, 100)            # Width and height of the road
+road_size = (200, 200)            # Width and height of the road
 road_direction = 0           # Direction in degrees
 starting_traffic_light_state = TrafficLightState.GREEN  # Assuming TrafficLightState is an enum or similar
 vehicles = []                    # Empty list for vehicles (for now)
 
 # Create a Road instance
-road = Road(position=road_position,
-            size=road_size,
-            direction=road_direction,
-            starting_status=starting_traffic_light_state,)
+road = RoundAbout(road_position, road_size, road_direction, 300)
 
 # Main loop for testing the road display
 running = True

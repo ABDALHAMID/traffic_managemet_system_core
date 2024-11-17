@@ -3,7 +3,7 @@ import math
 from simulation.simulationSystemBack.SimulationObject import Position, Size, Direction
 
 
-class StaticMethods:
+class PositionUtils:
     @staticmethod
     def getRelativeBottomRightPositionToSize(position: Position,
                                              direction: Direction,

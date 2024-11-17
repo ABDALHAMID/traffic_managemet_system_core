@@ -2,7 +2,7 @@ import math
 
 from simulation.Prefabs.TrafficLight import TrafficLight, TrafficLightState
 from simulation.Prefabs.positionChecker import PositionStopChecker, PositionStartChecker
-from simulation.simulationStatics.StaticMethods import StaticMethods
+from simulation.simulationStatics.PositionUtils import PositionUtils
 from simulation.simulationSystemBack.SimulationObject import SimulationObject
 
 
@@ -19,10 +19,10 @@ class Road(SimulationObject):
         traffic_light_x_offset = -30
         traffic_light_y_offset = 0
 
-        traffic_light_position = StaticMethods.getRelativeBottomRightPositionToSize(self.position,
-                                                                         self.direction,
-                                                                         self.size,
-                                                                         (traffic_light_x_offset, traffic_light_y_offset))
+        traffic_light_position = PositionUtils.getRelativeBottomRightPositionToSize(self.position,
+                                                                                    self.direction,
+                                                                                    self.size,
+                                                                                    (traffic_light_x_offset, traffic_light_y_offset))
 
         self.trafficLight = TrafficLight(traffic_light_position,
                                          self.direction.direction,
@@ -31,10 +31,10 @@ class Road(SimulationObject):
         position_checker_x_offset = 0
         position_checker_y_offset = 0
 
-        position_checker_position = StaticMethods.getRelativeCenterRightPositionToSize(self.position,
-                                                                         self.direction,
-                                                                         self.size,
-                                                                         (position_checker_x_offset,
+        position_checker_position = PositionUtils.getRelativeCenterRightPositionToSize(self.position,
+                                                                                       self.direction,
+                                                                                       self.size,
+                                                                                       (position_checker_x_offset,
                                                                           position_checker_y_offset))
 
         self.positionStopChecker = PositionStopChecker(position_checker_position,
@@ -45,10 +45,10 @@ class Road(SimulationObject):
         position_checker_x_offset = -50
         position_checker_y_offset = 0
 
-        position_checker_position = StaticMethods.getRelativeCenterLeftPositionToSize(self.position,
-                                                                                       self.direction,
-                                                                                       self.size,
-                                                                                       (position_checker_x_offset,
+        position_checker_position = PositionUtils.getRelativeCenterLeftPositionToSize(self.position,
+                                                                                      self.direction,
+                                                                                      self.size,
+                                                                                      (position_checker_x_offset,
                                                                                         position_checker_y_offset))
 
         self.positionStartChecker = PositionStartChecker(position_checker_position,

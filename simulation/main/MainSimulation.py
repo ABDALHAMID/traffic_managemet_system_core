@@ -69,12 +69,7 @@ class TrafficSimulation:
         #     }
         # }
 
-        self.roads = {
-            "l" : Road((150, 300), (300, 100), 0, TrafficLightState.GREEN),
-            "t": Road((400, 150), (300, 100), 90, TrafficLightState.GREEN),
-            "r": Road((650, 300), (300, 100), 180, TrafficLightState.GREEN),
-            "b": Road((400, 450), (300, 100), 270, TrafficLightState.GREEN),
-        }
+
 
         self.cars = []
         spawn_positions = []
